@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head><title>الورد اليومي</title></head>
+<body>
+<h2>الورد اليومي – اليوم الحالي</h2>
+<table border="1">
+<tr><th>القارئ</th><th>السورة</th><th>الآيات</th><th>تم القراءة</th></tr>
+{% for w in wards %}
+<tr>
+  <td>{{ w[1] }}</td>
+  <td>{{ w[2] }}</td>
+  <td>من الآية {{ w[3] }} إلى {{ w[4] }}</td>
+  <td>
+    {% if w[5]==1 %}
+      ✅
+    {% elif w[0]==current_member_id %}
+      <form method="POST" style="display:inline">
+        <button type="submit">تم ✅</button>
+      </form>
+    {% else %}
+      ⬜
+    {% endif %}
+  </td>
+</tr>
+{% endfor %}
+</table>
+</body>
+</html>
