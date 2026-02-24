@@ -1,28 +1,31 @@
 <!DOCTYPE html>
 <html>
-<head><title>لوحة تحكم المسؤول</title></head>
+<head>
+    <title>لوحة التحكم</title>
+</head>
 <body>
-<h2>لوحة تحكم المسؤول</h2>
-<p style="color:green">{{ msg }}</p>
-<form method="POST">
-  اختر العضو:
-  <select name="member_id">
-    {% for m in members %}
-      <option value="{{ m[0] }}">{{ m[1] }}</option>
-    {% endfor %}
-  </select><br><br>
+    <h2>لوحة تحكم الأدمن</h2>
+    <a href="/logout">تسجيل خروج</a>
 
-  اختر السورة:
-  <select name="sura">
-    {% for s, j in suras %}
-      <option value="{{ s }}">{{ s }}</option>
-    {% endfor %}
-  </select><br><br>
+    <h3>إضافة عضو</h3>
+    <form method="POST" action="/add_user">
+        <input type="text" name="name" placeholder="اسم العضو" required>
+        <input type="text" name="phone" placeholder="رقم الجوال" required>
+        <input type="text" name="password" placeholder="كلمة المرور" required>
+        <button type="submit">إضافة</button>
+    </form>
 
-  اختر الجزء:
-  <input type="number" name="part_number" min="1" max="30" required><br><br>
-
-  <button type="submit">حفظ ورد اليوم</button>
-</form>
+    <h3>إضافة ورد يومي</h3>
+    <form method="POST">
+        <select name="user_id">
+            {% for u in users %}
+            <option value="{{ u[0] }}">{{ u[1] }}</option>
+            {% endfor %}
+        </select><br><br>
+        <input type="text" name="surah" placeholder="اسم السورة" required><br><br>
+        <input type="number" name="from_ayah" placeholder="من آية" required><br><br>
+        <input type="number" name="to_ayah" placeholder="إلى آية" required><br><br>
+        <button type="submit">حفظ</button>
+    </form>
 </body>
 </html>
