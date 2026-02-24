@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>لوحة التحكم</title>
+</head>
+<body>
+    <h2>لوحة تحكم الأدمن</h2>
+    <a href="/logout">تسجيل خروج</a>
+
+    <h3>إضافة عضو</h3>
+    <form method="POST" action="/add_user">
+        <input type="text" name="name" placeholder="اسم العضو" required>
+        <input type="text" name="phone" placeholder="رقم الجوال" required>
+        <input type="text" name="password" placeholder="كلمة المرور" required>
+        <button type="submit">إضافة</button>
+    </form>
+
+    <h3>إضافة ورد يومي</h3>
+    <form method="POST">
+        <select name="user_id">
+            {% for u in users %}
+            <option value="{{ u[0] }}">{{ u[1] }}</option>
+            {% endfor %}
+        </select><br><br>
+        <input type="text" name="surah" placeholder="اسم السورة" required><br><br>
+        <input type="number" name="from_ayah" placeholder="من آية" required><br><br>
+        <input type="number" name="to_ayah" placeholder="إلى آية" required><br><br>
+        <button type="submit">حفظ</button>
+    </form>
+</body>
+</html>
