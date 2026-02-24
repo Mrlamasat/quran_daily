@@ -6,12 +6,10 @@ app = Flask(__name__)
 app.secret_key = "super_secret_key_change_this"
 
 DATABASE = "database.db"
-
 ADMIN_USERNAME = "admin"
 ADMIN_PASSWORD = "0639296170"
 
 # ------------------ DATABASE ------------------
-
 def init_db():
     conn = sqlite3.connect(DATABASE)
     c = conn.cursor()
@@ -36,36 +34,40 @@ def init_db():
         done INTEGER DEFAULT 0
     )
     """)
+    # أضف مستخدم تجريبي إذا لم يكن موجود
+    c.execute("SELECT * FROM users WHERE phone='0123456789'")
+    if not c.fetchone():
+        c.execute("INSERT INTO users (name, phone, password) VALUES ('Admin Test','0123456789','1234')")
     conn.commit()
     conn.close()
 
 def get_db():
     return sqlite3.connect(DATABASE)
 
-# ------------------ ROUTES ------------------
+# ------------------ INIT BEFORE FIRST REQUEST ------------------
+@app.before_first_request
+def setup():
+    init_db()
 
-# الصفحة الرئيسية
+# ------------------ ROUTES ------------------
 @app.route("/")
 def home():
-    return redirect("/login")  # الآن أي طلب root يذهب مباشرة للـ login
+    return redirect("/login")
 
-# ------------------ LOGIN ------------------
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/login", methods=["GET","POST"])
 def login():
     error = ""
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
 
-        # تسجيل دخول الأدمن
         if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
             session["admin"] = True
             return redirect("/admin")
 
-        # تسجيل دخول الأعضاء
         conn = get_db()
         c = conn.cursor()
-        c.execute("SELECT id FROM users WHERE phone=? AND password=?", (username, password))
+        c.execute("SELECT id FROM users WHERE phone=? AND password=?", (username,password))
         user = c.fetchone()
         conn.close()
         if user:
@@ -75,8 +77,7 @@ def login():
             error = "بيانات غير صحيحة"
     return render_template("login.html", error=error)
 
-# ------------------ DAILY PAGE ------------------
-@app.route("/daily", methods=["GET", "POST"])
+@app.route("/daily", methods=["GET","POST"])
 def daily():
     if "user_id" not in session:
         return redirect("/login")
@@ -93,12 +94,10 @@ def daily():
         c.execute("UPDATE daily SET done=1 WHERE id=? AND user_id=?", (daily_id, user_id))
         conn.commit()
         return redirect("/daily")
-
     conn.close()
     return render_template("daily.html", records=records, user_id=user_id)
 
-# ------------------ ADMIN PANEL ------------------
-@app.route("/admin", methods=["GET", "POST"])
+@app.route("/admin", methods=["GET","POST"])
 def admin():
     if "admin" not in session:
         return redirect("/login")
@@ -114,24 +113,18 @@ def admin():
         from_ayah = request.form["from_ayah"]
         to_ayah = request.form["to_ayah"]
 
-        c.execute("""
-        INSERT INTO daily (day, user_id, surah, from_ayah, to_ayah)
-        VALUES (1, ?, ?, ?, ?)
-        """, (user_id, surah, from_ayah, to_ayah))
+        c.execute("INSERT INTO daily (day, user_id, surah, from_ayah, to_ayah) VALUES (1,?,?,?,?)",
+                  (user_id, surah, from_ayah, to_ayah))
         conn.commit()
         return redirect("/admin")
-
     conn.close()
     return render_template("admin.html", users=users)
 
-# ------------------ LOGOUT ------------------
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/login")
 
-# ------------------ RUN ------------------
 if __name__ == "__main__":
-    init_db()
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
