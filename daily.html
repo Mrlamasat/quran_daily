@@ -1,28 +1,39 @@
 <!DOCTYPE html>
 <html>
-<head><title>الورد اليومي</title></head>
+<head>
+    <title>الورد اليومي</title>
+</head>
 <body>
-<h2>الورد اليومي – اليوم الحالي</h2>
-<table border="1">
-<tr><th>القارئ</th><th>السورة</th><th>الآيات</th><th>تم القراءة</th></tr>
-{% for w in wards %}
-<tr>
-  <td>{{ w[1] }}</td>
-  <td>{{ w[2] }}</td>
-  <td>من الآية {{ w[3] }} إلى {{ w[4] }}</td>
-  <td>
-    {% if w[5]==1 %}
-      ✅
-    {% elif w[0]==current_member_id %}
-      <form method="POST" style="display:inline">
-        <button type="submit">تم ✅</button>
-      </form>
-    {% else %}
-      ⬜
-    {% endif %}
-  </td>
-</tr>
-{% endfor %}
-</table>
+    <h2>الورد اليومي</h2>
+    <a href="/logout">تسجيل خروج</a>
+    <table border="1">
+        <tr>
+            <th>العضو</th>
+            <th>السورة</th>
+            <th>من</th>
+            <th>إلى</th>
+            <th>الحالة</th>
+        </tr>
+        {% for r in records %}
+        <tr>
+            <td>{{ r[2] }}</td>
+            <td>{{ r[3] }}</td>
+            <td>{{ r[4] }}</td>
+            <td>{{ r[5] }}</td>
+            <td>
+                {% if r[6] == 1 %}
+                    ✅
+                {% elif r[2] == user_id %}
+                    <form method="POST">
+                        <input type="hidden" name="daily_id" value="{{ r[0] }}">
+                        <button type="submit">تم</button>
+                    </form>
+                {% else %}
+                    ⬜
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
 </body>
 </html>
