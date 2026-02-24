@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>الورد اليومي</title>
+</head>
+<body>
+    <h2>الورد اليومي</h2>
+    <a href="/logout">تسجيل خروج</a>
+    <table border="1">
+        <tr>
+            <th>العضو</th>
+            <th>السورة</th>
+            <th>من</th>
+            <th>إلى</th>
+            <th>الحالة</th>
+        </tr>
+        {% for r in records %}
+        <tr>
+            <td>{{ r[2] }}</td>
+            <td>{{ r[3] }}</td>
+            <td>{{ r[4] }}</td>
+            <td>{{ r[5] }}</td>
+            <td>
+                {% if r[6] == 1 %}
+                    ✅
+                {% elif r[2] == user_id %}
+                    <form method="POST">
+                        <input type="hidden" name="daily_id" value="{{ r[0] }}">
+                        <button type="submit">تم</button>
+                    </form>
+                {% else %}
+                    ⬜
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
